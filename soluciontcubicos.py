@@ -62,24 +62,37 @@ def Integrar(datos,polinomios):
     xi = [float(x[0]) for x in datos]
     acum = float(0.0)
     x = sym.Symbol('x') 
+    print('Integrando Polinomios')
     for tramo in range(1,n,1):
         acum += sym.integrate(polinomios[tramo-1],(x,xi[tramo-1],xi[tramo]))
+        print(xi[tramo])
     return acum
 
-# TEST 1
-# Datos de prueba (1, 1), (2, 2), (3, 3) (4, 4)
-datos = [(1,1),(2,2),(3,3),(4,4)]
-#polinomios por tramos
-polinomios = CubicSplines(datos)
+#Obtener datos desde Base de datos
 
-#Integrar
-acum  = Integrar(datos,polinomios)
-print(acum)
+import sqlite3
+
+def Datosema():
+
+    con = sqlite3.connect("Miguelito.db")
+ 
+    cur = con.cursor()
+ 
+    cur.execute("SELECT numero,radi from datos where  datetime(tiempo,'localtime') BETWEEN '2020-03-28 06:00:00' AND '2020-03-28 18:00:00';")
+ 
+    rows = cur.fetchall()
+
+    cur.close()
+
+    con.close()
 
 
-# TEST 2
-# Datos de prueba (1, 1), (2, 2), (3, 3) (4, 4)
-datos = [(3, 582.89), (4, 538.2), (5, 630.24), (6, 475.86), (7, 447.34), (8, 440.28), (9, 443.66) ,(10, 449.69)]
+    return rows
+
+Ema = Datosema()
+
+# Datos de prueba
+datos = (Ema)
 
 #polinomios por tramos
 polinomios = CubicSplines(datos)
